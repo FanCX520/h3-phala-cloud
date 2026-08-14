@@ -6,11 +6,11 @@
 #  Phala Cloud DStack 通过 image: 直接拉取，不再现场构建。
 #
 #  本地构建:
-#    docker build -t ghcr.io/fancx520/comfyui-minimax-h3:latest .
+#    docker build -t ghcr.io/fancx520/h3-phala-cloud:latest .
 #
 #  Mac ARM:
 #    docker buildx build --platform linux/amd64 \
-#      -t ghcr.io/fancx520/comfyui-minimax-h3:latest .
+#      -t ghcr.io/fancx520/h3-phala-cloud:latest .
 # ═══════════════════════════════════════════════════════════════════
 ARG BASE_IMAGE=pytorch/pytorch:2.8.0-cuda12.8-cudnn9-runtime
 

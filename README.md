@@ -11,7 +11,7 @@
 
 ## ★ 思路：GitHub Actions 构建镜像 → Phala 直接 pull ★
 
-不再让 Phala 在容器启动时现场安装依赖。镜像在 GitHub Actions 一次性构建好推送到 **GHCR** (`ghcr.io/<user>/comfyui-minimax-h3:<tag>`)，Phala Cloud DStack 部署时只负责 `docker pull`，启动即用。
+不再让 Phala 在容器启动时现场安装依赖。镜像在 GitHub Actions 一次性构建好推送到 **GHCR** (`ghcr.io/fancx520/h3-phala-cloud:<tag>`)，Phala Cloud DStack 部署时只负责 `docker pull`，启动即用。
 
 | 原方案 | 本方案 |
 |---|---|
@@ -68,7 +68,7 @@ gh repo create h3-phala-cloud --public --source=. --remote=origin --push
 
 ### 第 2 步：把镜像设为公开
 
-仓库 → Settings → Packages → `comfyui-minimax-h3` → Package settings → Change visibility → Public
+仓库 → Settings → Packages → `h3-phala-cloud` → Package settings → Change visibility → Public
 
 ### 第 3 步：在 Phala Cloud 部署
 
@@ -80,7 +80,7 @@ gh repo create h3-phala-cloud --public --source=. --remote=origin --push
 
 如果想用其它 tag，把 Compose 第 4 行：
 ```yaml
-IMAGE: &IMAGE ghcr.io/<你的用户名>/comfyui-minimax-h3:latest
+IMAGE: &IMAGE ghcr.io/<你的用户名>/h3-phala-cloud:latest
 ```
 
 ### 第 4 步：访问
@@ -103,12 +103,12 @@ IMAGE: &IMAGE ghcr.io/<你的用户名>/comfyui-minimax-h3:latest
 
 ```bash
 # amd64 (Linux 服务器)
-docker build -f Dockerfile.builder -t ghcr.io/<你的用户名>/comfyui-minimax-h3:dev .
+docker build -f Dockerfile.builder -t ghcr.io/<你的用户名>/h3-phala-cloud:dev .
 
 # Apple Silicon
 docker buildx build --platform linux/amd64 \
   -f Dockerfile.builder \
-  -t ghcr.io/<你的用户名>/comfyui-minimax-h3:dev .
+  -t ghcr.io/<你的用户名>/h3-phala-cloud:dev .
 ```
 
 构建过程约 8-12 分钟（克隆 ComfyUI + pip 装依赖）。

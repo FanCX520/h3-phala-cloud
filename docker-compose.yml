@@ -1,10 +1,10 @@
 name: comfyui-h3
 
 # Phala Cloud DStack 拉镜像版本：默认 latest，可按需改成具体 tag
-# (例如 ghcr.io/<你的用户名>/comfyui-minimax-h3:v0.30.1)
+# (例如 ghcr.io/<你的用户名>/h3-phala-cloud:v0.30.1)
 services:
   comfyui:
-    image: ghcr.io/fancx520/comfyui-minimax-h3:latest
+    image: ghcr.io/fancx520/h3-phala-cloud:latest
     container_name: comfyui
     restart: unless-stopped
 
