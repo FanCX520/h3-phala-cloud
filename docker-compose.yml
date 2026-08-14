@@ -1,0 +1,50 @@
+name: comfyui-h3
+
+# Phala Cloud DStack 拉镜像版本：默认 latest，可按需改成具体 tag
+# (例如 ghcr.io/<你的用户名>/comfyui-minimax-h3:v0.30.1)
+services:
+  comfyui:
+    image: ghcr.io/fancx520/comfyui-minimax-h3:latest
+    container_name: comfyui
+    restart: unless-stopped
+
+    ports:
+      - "80:8188"
+
+    environment:
+      - HF_HOME=/workspace/hf_cache
+      - HF_HUB_ENABLE_HF_TRANSFER=0
+      - PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+      # WEIGHT_PROFILE 仅在使用 download_weights.py 时生效
+      - WEIGHT_PROFILE=T2V
+
+    volumes:
+      - comfyui-models:/workspace/ComfyUI/models
+      - comfyui-output:/workspace/ComfyUI/output
+      - comfyui-input:/workspace/ComfyUI/input
+      - comfyui-user:/workspace/ComfyUI/user
+      - comfyui-custom-nodes:/workspace/ComfyUI/custom_nodes
+      - comfyui-hf-cache:/workspace/hf_cache
+      - comfyui-tmp:/workspace/tmp
+
+    shm_size: "8gb"
+    ulimits:
+      memlock: -1
+      stack: 67108864
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+volumes:
+  comfyui-models:
+  comfyui-output:
+  comfyui-input:
+  comfyui-user:
+  comfyui-custom-nodes:
+  comfyui-hf-cache:
+  comfyui-tmp:
