@@ -2,19 +2,36 @@ name: comfyui-h3
 
 # Phala Cloud DStack 拉镜像版本：默认 latest，可按需改成具体 tag
 # (例如 ghcr.io/<你的用户名>/h3-phala-cloud:v0.30.1)
+#
+# 部署实例：h200.small / h200.8xlarge / h200.16xlarge（H200/H300）
+# 部署命令参考：
+#   phala deploy -c docker-compose.yml -n comfyui-h3 \
+#     --instance-type h200.small --image dstack-nvidia-dev-0.5.4.1 \
+#     --region US-EAST-1
+#
+# 公网 URL 由 Phala 按 host 端口暴露，形如：
+#   https://<app-id>-8188.dstack-pha-use2.phala.network
+# 所以这里把容器 8188 直接映射到 host 8188。
+
 services:
   comfyui:
     image: ghcr.io/fancx520/h3-phala-cloud:latest
     container_name: comfyui
     restart: unless-stopped
 
+    # H200/H300 GPU 直通，参考 Phala 官方 vLLM H200 compose 范例。
+    privileged: true
+    runtime: nvidia
+
     ports:
-      - "80:8188"
+      - "8188:8188"
 
     environment:
       - HF_HOME=/workspace/hf_cache
       - HF_HUB_ENABLE_HF_TRANSFER=0
       - PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
       # WEIGHT_PROFILE 仅在使用 download_weights.py 时生效
       - WEIGHT_PROFILE=T2V
 
@@ -26,6 +43,9 @@ services:
       - comfyui-custom-nodes:/workspace/ComfyUI/custom_nodes
       - comfyui-hf-cache:/workspace/hf_cache
       - comfyui-tmp:/workspace/tmp
+      # TEE guest agent socket，用于 attestation / KMS 派生密钥
+      # （可选：不使用 TEE 特性可省略，但官方范例都挂）
+      - /var/run/dstack.sock:/var/run/dstack.sock
 
     shm_size: "8gb"
     ulimits:
@@ -37,7 +57,7 @@ services:
         reservations:
           devices:
             - driver: nvidia
-              count: 1
+              count: all
               capabilities: [gpu]
 
 volumes:

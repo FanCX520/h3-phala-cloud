@@ -78,14 +78,28 @@ gh repo create h3-phala-cloud --public --source=. --remote=origin --push
 4. **不需要**任何 prelaunch 脚本 / build context / 私有 registry 凭据 — 镜像是公开的
 5. 选 H200 / H300 实例 → **Deploy**
 
-如果想用其它 tag，把 Compose 第 4 行：
+如果想用其它 tag，把 Compose 第 7 行的 image 改成你需要的 tag，例如：
 ```yaml
-IMAGE: &IMAGE ghcr.io/<你的用户名>/h3-phala-cloud:latest
+image: ghcr.io/fancx520/h3-phala-cloud:v0.30.1
+```
+
+**CLI 部署参考**：
+```bash
+phala deploy -c docker-compose.yml -n comfyui-h3 \
+  --instance-type h200.small \
+  --image dstack-nvidia-dev-0.5.4.1 \
+  --region US-EAST-1
 ```
 
 ### 第 4 步：访问
 
-容器启动后用 Phala 默认公网域名即可访问 ComfyUI (端口 8188 已映射到容器 80 端口)。
+容器启动后用 Phala 默认公网域名即可访问 ComfyUI。Phala 按 host 端口号生成 URL，形态如：
+
+```
+https://<app-id>-8188.dstack-pha-use2.phala.network
+```
+
+所以 compose 把容器 8188 直接映射到 host 8188（不再是 80），公网 URL 直接显示端口号，避免冲突。
 
 ## 首次启动时间线
 
